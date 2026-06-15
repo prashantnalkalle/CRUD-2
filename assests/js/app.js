@@ -26,12 +26,6 @@ function snackbar(msg,icon){
   })
 }
 
-
-
-
-
-
-
 function fetchposts(){
   spinner.classList.remove('d-none')
   let Post_url =`${Base_Url}/posts`
@@ -43,12 +37,20 @@ function fetchposts(){
   xhr.send(null)
   
   xhr.onload = function(){
-    let postArr = JSON.parse(xhr.response)
+    if(xhr.status >= 200 && xhr.status <= 299){
+      let postArr = JSON.parse(xhr.response)
 
-    createCard(postArr.reverse())
+      createCard(postArr.reverse())
+
+    }
+    
+    spinner.classList.add('d-none')
 
 
   }
+
+  spinner.classList.add('d-none')
+
 
 
 }
@@ -77,7 +79,6 @@ function createCard(arr){
   });
   
   postcontainer.innerHTML = result
-  spinner.classList.add('d-none')
 
 
   
@@ -102,18 +103,22 @@ function onsubmit(ele){
 
   xhr.open('POST',post_Url)
 
-  xhr.send(newObj)
+  xhr.send(JSON.stringify(newObj))
 
   xhr.onload = function(){
+    if(xhr.status >= 200 && xhr.status <= 299){
+      let response = JSON.parse(xhr.response)
 
-    let response = JSON.parse(xhr.response)
-
-    Addpost(newObj,response)
+      Addpost(newObj,response)
+    }
+   
+    spinner.classList.add('d-none')
 
 
   }
 
 
+  spinner.classList.add('d-none')
 
 }
 
@@ -184,6 +189,7 @@ function onEdit(ele){
 
   }
 
+  spinner.classList.add('d-none')
 
 
 }
@@ -207,7 +213,7 @@ function onupdate(){
 
   xhr.open('PUT',PUT_Url)
 
-  xhr.send(updateObj)
+  xhr.send(JSON.stringify(updateObj))
 
   xhr.onload = function(){
     if(xhr.status >= 200 && xhr.status <=299){
@@ -232,36 +238,54 @@ function onupdate(){
 
 
 
-  spinner.classList.add('d-none')
+    spinner.classList.add('d-none')
 
   }
+
+  spinner.classList.add('d-none')
 
 
 }
 
 
 function onRemove(ele){
+  spinner.classList.add('d-none')
 
-  
   let removeId = ele.closest('.col-md-3').id
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      
+      let Delete_url = `${Base_Url}/posts/${removeId}`
 
-  let Delete_url = `${Base_Url}/posts/${removeId}`
+      let xhr = new XMLHttpRequest()
 
-  let xhr = new XMLHttpRequest()
+      xhr.open('DELETE',Delete_url)
 
-  xhr.open('DELETE',Delete_url)
+      xhr.send(null)
 
-  xhr.send(null)
-
-  xhr.onload = function(){
-    if(xhr.status >= 200 && xhr.status <=299){
-      ele.closest('.col-md-3').remove()
+      xhr.onload = function(){
+        if(xhr.status >= 200 && xhr.status <=299){
+          ele.closest('.col-md-3').remove()
 
 
-      snackbar(`The  Post ${removeId} is Deleted Successfully!!!`,'success')
+          snackbar(`The  Post ${removeId} is Deleted Successfully!!!`,'success')
 
+        }
+
+        spinner.classList.add('d-none')
+        
+      }
     }
-  }
+  });
+  spinner.classList.add('d-none')
 
 }
 
