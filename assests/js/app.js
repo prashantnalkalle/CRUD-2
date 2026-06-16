@@ -15,14 +15,11 @@ let postArr =[]
 
 let Base_Url = 'https://jsonplaceholder.typicode.com'
 
-
-
-
 function snackbar(msg,icon){
   swal.fire({
     title : msg,
     icon:icon,
-    timer :3000
+    timer :2000
   })
 }
 
@@ -41,6 +38,9 @@ function fetchposts(){
       let postArr = JSON.parse(xhr.response)
 
       createCard(postArr.reverse())
+      $(function () {
+       $('[data-toggle="tooltip"]').tooltip()
+      })
 
     }
     
@@ -63,7 +63,7 @@ function createCard(arr){
   arr.forEach(ele => {
     result+=`<div class="col-md-3 my-4" id='${ele.id}'>
 					<div class="card h-100">
-						<div class="card-header">
+						<div class="card-header" data-toggle="tooltip" data-placement="top" title="${ele.title}">
 							<h2>${ele.title}</h2>
 						</div>
 						<div class="card-body">
@@ -110,6 +110,9 @@ function onsubmit(ele){
       let response = JSON.parse(xhr.response)
 
       Addpost(newObj,response)
+       $(function () {
+       $('[data-toggle="tooltip"]').tooltip()
+      })
     }
    
     spinner.classList.add('d-none')
@@ -130,7 +133,7 @@ function Addpost(newObj,response){
   div.id = response.id
 
   div.innerHTML =`<div class="card h-100">
-						<div class="card-header">
+						<div class="card-header" data-toggle="tooltip" data-placement="top" title="${newObj.title}">
 							<h2>${newObj.title}</h2>
 						</div>
 						<div class="card-body">
@@ -180,6 +183,13 @@ function onEdit(ele){
 
      Addpostbtn.classList.add('d-none')
      Updatepostbtn.classList.remove('d-none')
+
+       inputform.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+
+
 
 
     }
@@ -233,10 +243,18 @@ function onupdate(){
      Updatepostbtn.classList.add('d-none')
      snackbar(`The Post ${updateId} is Updated Successfully!!!`,'success')
 
+        div.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+      });
+
+      div.classList.add('highlight');
+
+      setTimeout(() => {
+          div.classList.remove('highlight');
+      }, 3000);
+
     }
-
-
-
 
     spinner.classList.add('d-none')
 
